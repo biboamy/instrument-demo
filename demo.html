@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+		<meta charset="utf-8"> 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/wavesurfer.min.js"></script>
+		<script type="text/javascript" src="plugin/wavesurfer-regions.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/plugin/wavesurfer.timeline.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		<link rel="stylesheet" href="css/demo.css"> 
+	</head>
+	<body>
+		<center><h1>Instrument Recognition Demo Page</h1>
+		<p style="width: 60%">
+		Yun-Ning Hung<br>
+		Music and Audio Computing Lab<br>
+		Research Center for IT innovation, Academia Sinica, Taipei, Taiwan<br>
+		</i>
+		<a href="https://github.com/biboamy" class="fab fa-github"><span class="label">Github</span></a>
+		<a href="https://scholar.google.com/citations?view_op=list_works&hl=zh-TW&user=2BhJwLsAAAAJ" class="fab fa-google"><span class="label">Google</span></a>
+		<a href="mailto:biboamybibo@gmail.com" class="fas fa-envelope"><span class="label">Email</span></a>
+		<a href="https://www.linkedin.com/in/yun-ning-hung-6397199b/" class="fab fa-linkedin"><span class="label">Linkedin</span></a>
+		</p>
+		<p style="width: 60%">This page further demostrates the instrument prediction result trained on <a href="">Musescore Dataset</a>, which is a large scale audio and MIDI dataset we collected from Musescore forum.</p>
+		<div id='model_choose'>
+			<select id="s_model">
+				<option value="model1">MusicNet</option>
+				<!--<option value="model2">MedleyDB</option>-->
+				<option value="model3">Musescore</option>
+				<!--<option value="model4">Musescore+Disentanglement</option>-->
+			</select>
+			<select id="s_song">
+				<option value="make_you">Make You Feel My Love - Adele</option>
+				<option value="海洋">海洋 - 陳建年</option>
+				<option value="十年一刻">十年一刻 - 蘇打綠</option>
+				<option value="foxey_lady">Foxy Lady - Jimi Hendrix </option>
+				<option value="氧氣">氧氣 - 范曉萱</option>
+				<option value="寶貝">寶貝 - 張懸</option>
+				<option value="天使">天使 - 五月天</option>
+				<option value="volcano">Volcano - Damien Rice</option>
+				<option value="say_something">Say Something - Christina Aguilera</option>
+				<option value="fly_me">Fly Me To The Moon - Frank Sinatra</option>
+			</select>
+			<button onclick="togglePlay()">Play/Pause</button>
+		</div>
+		
+
+		<div id='button_block'>
+			<div class="left_region" id="label1">
+				<p>Piano</p>
+				<p>A-Guitar</p>
+				<p>E-Guitar</p>
+				<p>Drum</p>
+				<p>Trumpet</p>
+				<p>Sax</p>
+				<p>Bass</p>
+				<p>Violin</p>
+				<p>Cello</p>
+				<p>Flute</p>
+			</div>
+			<div class="left_region" id="label2" >
+				<p>Piano</p>
+				<p>Violin</p>
+				<p>Viola</p>
+				<p>Cello</p>
+				<p>Clarinet</p>
+				<p>Bassoon</p>
+				<p>Horn</p>
+			</div>
+			<div id='right_region'>
+				<div id="waveform-timeline"></div>
+				<div id="waveform"></div>
+			</div>
+		</div>
+		</center>
+	</body>
+	<script type="text/javascript">
+		var wavesurfer = WaveSurfer.create({
+			container: '#waveform',
+			waveColor: '#267CB9',
+			progressColor: '#00008B',
+		});
+		//create wave form
+		//var strUrl = location.search;
+		//params = strUrl.split("?")[1]
+		//model = params.split("&")[0].split("=")[1]
+		//song = params.split("&")[1].split("=")[1] 
+		$("#s_model").val('model3');
+		load_song('make_you')
+		//if(model=="model1"||model=="model2"){
+		//		change_label(2)
+		//	}
+		//	else{
+		//		change_label(1)
+		//	}
+		change_label(1)
+		//change song
+		$('#s_song').on('change', function() {
+			load_song(this.value)
+		})
+		$('#s_model').on('change', function() {
+			show_result( this.value,$( "#s_song" ).val() );
+			if(this.value=="model1"||this.value=="model2"){
+				change_label(2)
+			}
+			else{
+				change_label(1)
+			}
+		})
+
+		function togglePlay(){
+			wavesurfer.playPause()
+		}
+
+		function load_song(song){
+			name = song
+			wavesurfer.load('mp3/'+song+'.mp3');
+			wavesurfer.on('ready', function () {
+				if (song==name){
+					console.log(song)
+					var timeline = Object.create(WaveSurfer.Timeline);
+					timeline.init({
+					   	wavesurfer: wavesurfer,
+					    container: '#waveform-timeline'
+					});
+					
+					show_result($( "#s_model" ).val(),song)
+				}
+			});
+		}
+
+		function change_label(choose){
+			if(choose==1){
+				$('#label1').css( "display", "inline-block" )
+				$('#label2').css( "display", "none" )
+			}
+			if(choose==2){
+				$('#label2').css( "display", "inline-block" )
+				$('#label1').css( "display", "none" )
+			}
+		}
+
+		function show_result(model,name){
+			
+			wavesurfer.clearRegions()
+			for (i = 0; i < 10; i++) { 
+				(function(i) {
+					$.getJSON('json/'+model+'/'+name+'/'+i+'.json', function(data) {         
+						for (j in data) {
+						    wavesurfer.addRegion({start: data[j]['start'], end: data[j]['end'], top: 140+i*40, color: 'hsla(0, 0%, 0%, 0.4)'});
+						}
+					});
+				})(i);
+			}
+		}
+
+		$( "wave" ).first().css( "height", 550 );
+
+	</script>
+</html> 
