@@ -22,7 +22,7 @@
 		<a href="mailto:biboamybibo@gmail.com" class="fas fa-envelope"><span class="label">Email</span></a>
 		<a href="https://www.linkedin.com/in/yun-ning-hung-6397199b/" class="fab fa-linkedin"><span class="label">Linkedin</span></a>
 		</p>
-		<p style="width: 60%">This page further demostrates the instrument prediction result trained on <a href="">Musescore Dataset</a> and <a href="https://homes.cs.washington.edu/~thickstn/musicnet.html">MusicNet Dataset</a>.</p>
+		<p style="width: 60%">This page further demostrates the instrument prediction result trained on <a href="">Musescore Dataset</a> and <a href="https://homes.cs.washington.edu/~thickstn/musicnet.html">MusicNet Dataset</a>. Visit <a href="https://biboamy.github.io/instrument-recognition/index.html">project website</a> for detailed information.</p>
 		<div id='model_choose'>
 			<select id="s_model">
 				<option value="model1">MusicNet</option>
@@ -33,14 +33,19 @@
 			<select id="s_song">
 				<option value="make_you">Make You Feel My Love - Adele</option>
 				<option value="海洋">海洋 - 陳建年</option>
-				<option value="十年一刻">十年一刻 - 蘇打綠</option>
 				<option value="foxey_lady">Foxy Lady - Jimi Hendrix </option>
 				<option value="氧氣">氧氣 - 范曉萱</option>
 				<option value="寶貝">寶貝 - 張懸</option>
-				<option value="天使">天使 - 五月天</option>
-				<option value="volcano">Volcano - Damien Rice</option>
 				<option value="say_something">Say Something - Christina Aguilera</option>
-				<option value="fly_me">Fly Me To The Moon - Frank Sinatra</option>
+				<option value="all_of_me">All Of Me - Guitar and Violin</option>
+				<option value="test2">Violin and Cello</option>
+				<option value="test5">Beauty And The Beast - Piano, Violin and Flute</option>
+				<option value="test9">Somewhete Over The Rainbow - Piano, Violin and Cello</option>
+				<option value="test10">Piano and Violin</option>
+				<!--<option value="天使">天使 - 五月天</option>
+				<option value="volcano">Volcano - Damien Rice</option>-->
+				
+				<!--<option value="fly_me">Fly Me To The Moon - Frank Sinatra</option>-->
 			</select>
 			<button onclick="togglePlay()">Play/Pause</button>
 		</div>
@@ -51,7 +56,7 @@
 				<p>Piano</p>
 				<p>A-Guitar</p>
 				<p>E-Guitar</p>
-				<p>Drum</p>
+				<!--<p>Drum</p>-->
 				<p>Trumpet</p>
 				<p>Sax</p>
 				<p>Bass</p>
@@ -144,7 +149,7 @@
 		function show_result(model,name){
 			
 			wavesurfer.clearRegions()
-			for (i = 0; i < 10; i++) { 
+			for (i = 0; i < 9; i++) { 
 				(function(i) {
 					$.getJSON('json/'+model+'/'+name+'/'+i+'.json', function(data) {         
 						for (j in data) {
